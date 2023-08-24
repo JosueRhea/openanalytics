@@ -8,6 +8,13 @@
       "when": 1692890564738,
       "tag": "0000_goofy_snowbird",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1692910605139,
+      "tag": "0001_wandering_hydra",
+      "breakpoints": true
     }
   ]
 }

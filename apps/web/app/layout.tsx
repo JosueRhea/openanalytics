@@ -1,5 +1,13 @@
-import { Theme, ThemePanel } from "@radix-ui/themes";
+import { Container, Theme } from "@radix-ui/themes";
+import { Inter } from "next/font/google";
 import "@radix-ui/themes/styles.css";
+import "./theme-config.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
 export default async function RootLayout({
   children,
@@ -7,10 +15,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body>
-        <Theme>
-          {children}
+        <Theme accentColor="gray">
+          <Container>{children}</Container>
         </Theme>
       </body>
     </html>

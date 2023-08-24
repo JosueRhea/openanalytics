@@ -1,11 +1,17 @@
 "use client";
 import { signIn, signOut } from "next-auth/react";
+interface Props {
+  hasSession: boolean;
+}
 
-export function Login() {
+export function Login({ hasSession }: Props) {
   return (
     <div>
-      <button onClick={() => signIn("github")}>Login</button>
-      <button onClick={() => signOut()}>logout</button>
+      {hasSession ? (
+        <button onClick={() => signOut()}>logout</button>
+      ) : (
+        <button onClick={() => signIn("github")}>Login</button>
+      )}
     </div>
   );
 }

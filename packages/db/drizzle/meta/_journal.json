@@ -15,6 +15,13 @@
       "when": 1692910605139,
       "tag": "0001_wandering_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1693063247132,
+      "tag": "0002_lonely_jubilee",
+      "breakpoints": true
     }
   ]
 }

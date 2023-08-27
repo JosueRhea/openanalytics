@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.3.2",
+    "@openanalytics/api": "workspace:^",
     "@openanalytics/db": "workspace:^",
     "@radix-ui/react-icons": "^1.3.0",
     "@radix-ui/themes": "^1.1.2",

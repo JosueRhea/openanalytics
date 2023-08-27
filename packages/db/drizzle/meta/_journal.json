@@ -22,6 +22,20 @@
       "when": 1693063247132,
       "tag": "0002_lonely_jubilee",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1693070521517,
+      "tag": "0003_yellow_power_pack",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1693070863539,
+      "tag": "0004_fancy_warstar",
+      "breakpoints": true
     }
   ]
 }

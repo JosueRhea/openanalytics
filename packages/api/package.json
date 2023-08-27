@@ -1,0 +1,18 @@
+{
+  "name": "@openanalytics/api",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tsconfig": "workspace:^",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@openanalytics/db": "workspace:^"
+  }
+}

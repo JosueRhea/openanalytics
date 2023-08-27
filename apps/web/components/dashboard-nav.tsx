@@ -8,12 +8,13 @@ interface Props {
 }
 
 export function DashboardNav({ session }: Props) {
+  
   return (
     <Flex justify="between" align="center">
       <Heading size="6">OpenAnalytics</Heading>
       <Flex align={"center"} gap="2">
         <Logout />
-        <AddSite />
+        <AddSite userId={session?.user.id as string} />
         <Avatar src={session?.user?.image ?? undefined} fallback={"NA"} />
       </Flex>
     </Flex>

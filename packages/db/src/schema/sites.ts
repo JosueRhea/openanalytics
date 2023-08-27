@@ -1,16 +1,18 @@
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "./users";
+import { createInsertSchema } from "drizzle-valibot";
+import { flatten, minLength, safeParse, string, url } from "valibot";
 
 export const sites = pgTable("site", {
   name: text("name").notNull(),
   id: uuid("id").primaryKey().defaultRandom(),
-  url: text("url"),
+  url: text("url").notNull(),
   created_at: timestamp("created_at", {
     withTimezone: true,
   }).defaultNow(),
   userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });
 
 export const record = pgTable("record", {
@@ -25,5 +27,20 @@ export const record = pgTable("record", {
   country: text("country"),
   device: text("device"),
   referer: text("referer"),
-  path: text("path")
+  path: text("path"),
 });
+
+export const insertSiteSchema = createInsertSchema(sites, {
+  url: string([url("Must be a vald url")]),
+  name: string([minLength(1, "Please provide a name for your site")]),
+  userId: string([minLength(1, "Missing userId")]),
+});
+
+export function validateInsertSite(input: unknown) {
+  const data = safeParse(insertSiteSchema, input);
+  if (!data.success) {
+    return { ...data, errors: flatten(data.issues).nested };
+  }
+  return data;
+  
+}

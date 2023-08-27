@@ -1,4 +1,7 @@
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ["@openanalytics/db"],
+  transpilePackages: ["@openanalytics/db", "@openanalytics/api"],
+  experimental: {
+    serverActions: true,
+  },
 };

@@ -1,7 +1,7 @@
 import { DashboardNav, Site } from "@/components";
+import { authOptions } from "@openanalytics/api/src/auth";
 import { Flex, Grid, Heading } from "@radix-ui/themes";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
 
 async function DashboardPage() {
   const session = await getServerSession(authOptions);

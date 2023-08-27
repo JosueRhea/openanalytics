@@ -1,5 +1,5 @@
 import { Login } from "@/components";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@openanalytics/api/src/auth";
 import { getServerSession } from "next-auth";
 
 export default async function Page() {

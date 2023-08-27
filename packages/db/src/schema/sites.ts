@@ -42,5 +42,4 @@ export function validateInsertSite(input: unknown) {
     return { ...data, errors: flatten(data.issues).nested };
   }
   return data;
-  
 }

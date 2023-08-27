@@ -8,7 +8,6 @@ interface Props {
 }
 
 export function DashboardNav({ session }: Props) {
-  
   return (
     <Flex justify="between" align="center">
       <Heading size="6">OpenAnalytics</Heading>

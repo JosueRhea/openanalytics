@@ -13,11 +13,13 @@ interface Props {
 export const AddSite = ({ userId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const handleOnSubmit = async (formData: FormData) => {
-    const data = await createSite(formData);
+    const data = await createSite(formData, userId);
     if (data.success) {
       setIsOpen(false);
       return;
     }
+
+    console.log(data);
   };
 
   return (
@@ -55,7 +57,6 @@ export const AddSite = ({ userId }: Props) => {
                 placeholder="mysite.com"
               />
             </label>
-            <input type="hidden" name="userId" value={userId} />
           </Flex>
 
           <Flex gap="3" mt="4" justify="end">
@@ -74,7 +75,7 @@ export const AddSite = ({ userId }: Props) => {
 
 function SaveButton() {
   const { pending } = useFormStatus();
-  
+
   return (
     <Button highContrast disabled={pending} type="submit">
       {pending ? "..." : "Save"}

@@ -43,3 +43,5 @@ export function validateInsertSite(input: unknown) {
   }
   return data;
 }
+
+export type Site = typeof sites.$inferSelect;

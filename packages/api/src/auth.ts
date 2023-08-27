@@ -45,3 +45,18 @@ export function withOwnUserAuth(action: any) {
     return action(formData, userId);
   };
 }
+
+export function withOwnUserAuthGet<T>(action: (userId: string) => Promise<T>) {
+  return async () => {
+    const session = await getServerSession(authOptions);
+    const sessionUserId = session?.user.id;
+    if (!sessionUserId) {
+      return {
+        data: null,
+        error: { message: "Not authenticated" },
+      };
+    }
+
+    return action(sessionUserId);
+  };
+}

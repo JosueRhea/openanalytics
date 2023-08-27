@@ -3,6 +3,7 @@
 import { createSite } from "@openanalytics/api";
 import { PlusIcon } from "@radix-ui/react-icons";
 import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
@@ -12,10 +13,12 @@ interface Props {
 
 export const AddSite = ({ userId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { refresh } = useRouter();
   const handleOnSubmit = async (formData: FormData) => {
     const data = await createSite(formData, userId);
     if (data.success) {
       setIsOpen(false);
+      refresh();
       return;
     }
 

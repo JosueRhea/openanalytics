@@ -1,13 +1,12 @@
 import { Avatar, Flex, Heading } from "@radix-ui/themes";
-import type { Session } from "next-auth";
+import { getServerSession } from "next-auth";
 import { Logout } from "./logout";
 import { AddSite } from "./add-site";
+import { authOptions } from "@openanalytics/api/src/auth";
 
-interface Props {
-  session: Session | null;
-}
+export async function DashboardNav() {
+  const session = await getServerSession(authOptions);
 
-export function DashboardNav({ session }: Props) {
   return (
     <Flex justify="between" align="center">
       <Heading size="6">OpenAnalytics</Heading>

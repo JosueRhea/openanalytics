@@ -1,7 +1,8 @@
 "use server";
 
-import { db, schema } from "@openanalytics/db";
-import { withOwnUserAuth } from "../auth";
+import { db, eq, schema } from "@openanalytics/db";
+import { withOwnUserAuth, withOwnUserAuthGet } from "../auth";
+import { type Site } from "@openanalytics/db/src/schema";
 
 export const createSite = withOwnUserAuth(
   async (formData: FormData, userId: string) => {
@@ -21,6 +22,24 @@ export const createSite = withOwnUserAuth(
     } catch (error) {
       console.log(error);
       return { success: false, error: { message: "Something went wrong" } };
+    }
+  },
+);
+
+export const getSites = withOwnUserAuthGet(
+  async (
+    userId: string,
+  ): Promise<
+    { data: Site[]; error: null } | { data: null; error: { message: string } }
+  > => {
+    try {
+      const data = await db
+        .select()
+        .from(schema.sites)
+        .where(eq(schema.sites.userId, userId));
+      return { data, error: null };
+    } catch (error) {
+      return { data: null, error: { message: "Something went wrong" } };
     }
   },
 );

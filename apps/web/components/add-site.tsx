@@ -6,6 +6,7 @@ import { Button, Dialog, Flex, Text, TextField } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
+import { Input } from "./input";
 
 interface Props {
   userId: string;
@@ -14,6 +15,8 @@ interface Props {
 export const AddSite = ({ userId }: Props) => {
   const [isOpen, setIsOpen] = useState(false);
   const { refresh } = useRouter();
+  const [nameErrors, setNameErrors] = useState([]);
+  const [urlErrors, setUrlErrors] = useState([]);
   const handleOnSubmit = async (formData: FormData) => {
     const data = await createSite(formData, userId);
     if (data.success) {
@@ -22,7 +25,12 @@ export const AddSite = ({ userId }: Props) => {
       return;
     }
 
-    console.log(data);
+    if (data.inputs?.name) {
+      setNameErrors(data.inputs?.name);
+    }
+    if (data.inputs?.url) {
+      setUrlErrors(data.inputs?.url);
+    }
   };
 
   return (
@@ -40,28 +48,19 @@ export const AddSite = ({ userId }: Props) => {
         </Dialog.Description>
         <form action={handleOnSubmit}>
           <Flex direction="column" gap="3">
-            <label>
-              <Text as="div" size="2" mb="1" weight="bold">
-                Name
-              </Text>
-              <TextField.Input
-                name="name"
-                defaultValue=""
-                placeholder="My site name"
-              />
-            </label>
-            <label>
-              <Text as="div" size="2" mb="1" weight="bold">
-                Url
-              </Text>
-              <TextField.Input
-                name="url"
-                defaultValue=""
-                placeholder="mysite.com"
-              />
-            </label>
+            <Input
+              errors={nameErrors}
+              label="Name"
+              name="name"
+              placeholder="My site name"
+            />
+            <Input
+              errors={urlErrors}
+              label="Url"
+              name="url"
+              placeholder="mysite.com"
+            />
           </Flex>
-
           <Flex gap="3" mt="4" justify="end">
             <Dialog.Close>
               <Button variant="soft" color="gray">

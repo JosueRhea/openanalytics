@@ -2,6 +2,7 @@ import { Container, Theme } from "@radix-ui/themes";
 import { Inter } from "next/font/google";
 import "@radix-ui/themes/styles.css";
 import "./theme-config.css";
+import { DashboardNav } from "@/components";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -18,7 +19,10 @@ export default async function RootLayout({
     <html lang="en" className={inter.variable}>
       <body>
         <Theme accentColor="gray">
-          <Container>{children}</Container>
+          <Container>
+            <DashboardNav />
+            {children}
+          </Container>
         </Theme>
       </body>
     </html>

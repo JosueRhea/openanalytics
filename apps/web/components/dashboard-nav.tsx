@@ -1,4 +1,4 @@
-import { Avatar, Flex, Heading } from "@radix-ui/themes";
+import { Avatar, Flex } from "@radix-ui/themes";
 import { getServerSession } from "next-auth";
 import { Logout } from "./logout";
 import { AddSite } from "./add-site";
@@ -13,9 +13,13 @@ export async function DashboardNav() {
       {/* <Heading size="6">OpenAnalytics</Heading> */}
       <Logo />
       <Flex align={"center"} gap="2">
-        <Logout />
-        <AddSite userId={session?.user.id as string} />
-        <Avatar src={session?.user?.image ?? undefined} fallback={"NA"} />
+        {session && (
+          <>
+            <Logout />
+            <AddSite userId={session?.user.id as string} />
+            <Avatar src={session?.user?.image ?? undefined} fallback={"NA"} />
+          </>
+        )}
       </Flex>
     </Flex>
   );

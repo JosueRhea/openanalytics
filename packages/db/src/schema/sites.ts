@@ -36,6 +36,8 @@ export const insertSiteSchema = createInsertSchema(sites, {
   userId: string([minLength(1, "Missing userId")]),
 });
 
+export const insertRecordSchema = createInsertSchema(record);
+
 export function validateInsertSite(input: unknown) {
   const data = safeParse(insertSiteSchema, input);
   if (!data.success) {
@@ -44,4 +46,13 @@ export function validateInsertSite(input: unknown) {
   return data;
 }
 
+export function validateInsertRecord(input: unknown) {
+  const data = safeParse(insertRecordSchema, input);
+  if (!data.success) {
+    return { ...data, errors: flatten(data.issues).nested };
+  }
+  return data;
+}
+
 export type Site = typeof sites.$inferSelect;
+export type Record = typeof record.$inferInsert;

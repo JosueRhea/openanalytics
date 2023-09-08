@@ -8,7 +8,9 @@ import {
   CommonSelectRecordsArgs,
   RecordByHits,
   RecordsByCountry,
+  RecordsByHits,
 } from "../types/records";
+import { ApiGetResponse } from "../types/global";
 
 export const createRecord = async (formData: FormData) => {
   try {
@@ -49,7 +51,7 @@ export const createRecord = async (formData: FormData) => {
 export const getRecorByHits = async ({
   range,
   site_id,
-}: CommonSelectRecordsArgs) => {
+}: CommonSelectRecordsArgs): ApiGetResponse<RecordsByHits> => {
   try {
     const statement = sql`with dates as (
       select generate_series(
@@ -74,7 +76,14 @@ export const getRecorByHits = async ({
     `;
 
     const data: RecordByHits[] = await db.execute(statement);
-    return { data, error: null };
+    const parsedData = data.map((record) => {
+      return {
+        ...record,
+        hits: Number(record.hits),
+      };
+    }) as RecordByHits[];
+
+    return { data: { records: parsedData, totalHits: 0 }, error: null };
   } catch (error) {
     console.log(error);
     return { data: null, error: { message: "Something went wrong" } };
@@ -116,7 +125,7 @@ export const getRecordsByCountry = async ({
     `;
 
     const res: RecordsByCountry[] = await db.execute(statement);
-    return {  data: res, error: null };
+    return { data: res, error: null };
   } catch (error) {
     console.log(error);
     return { data: null, error: { message: "Something went wrong" } };

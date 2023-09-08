@@ -17,5 +17,10 @@ export type RecordsByCountry =  {
 
 export type RecordByHits = {
   date: string;
-  hits: string;
+  hits: number;
+}
+
+export type RecordsByHits = {
+  records: RecordByHits[],
+  totalHits: number
 }

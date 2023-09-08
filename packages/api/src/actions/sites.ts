@@ -23,12 +23,12 @@ export const createSite = withOwnUserAuth(
       console.log(error);
       return { success: false, error: { message: "Something went wrong" } };
     }
-  },
+  }
 );
 
 export const getSites = withOwnUserAuthGet(
   async (
-    userId: string,
+    userId: string
   ): Promise<
     { data: Site[]; error: null } | { data: null; error: { message: string } }
   > => {
@@ -41,5 +41,21 @@ export const getSites = withOwnUserAuthGet(
     } catch (error) {
       return { data: null, error: { message: "Something went wrong" } };
     }
-  },
+  }
 );
+
+export type GetSiteArgs = {
+  site_id: string;
+};
+export const getSite = async ({ site_id }: GetSiteArgs) => {
+  try {
+    const data = await db
+      .select()
+      .from(schema.sites)
+      .where(eq(schema.sites.id, site_id));
+
+    return { data: data[0], error: null };
+  } catch (error) {
+    return { data: null, error: { message: "Something went wrong" } };
+  }
+};

@@ -3,7 +3,12 @@ import { validateInsertRecord } from "@openanalytics/db/src/schema";
 import parser from "ua-parser-js";
 import geoip from "fast-geoip";
 import { COUNTRIES } from "../lib/countries";
-import { db, schema } from "@openanalytics/db";
+import { db, schema, sql } from "@openanalytics/db";
+import {
+  CommonSelectRecordsArgs,
+  RecordByHits,
+  RecordsByCountry,
+} from "../types/records";
 
 export const createRecord = async (formData: FormData) => {
   try {
@@ -18,11 +23,15 @@ export const createRecord = async (formData: FormData) => {
     dataToSave.browser = info.browser.name;
     dataToSave.device = info.os.name;
 
-    const localization = await geoip.lookup(parsedData.output.ip ?? "");
+    const localization = await geoip.lookup("207.97.227.239" ?? "");
+
     dataToSave.country =
       localization?.country != undefined
         ? COUNTRIES[localization.country]
         : "unknown";
+
+    dataToSave.ip = "207.97.227.239";
+
     dataToSave.city = localization?.city || "unknown";
 
     const newRecord = await db
@@ -32,7 +41,84 @@ export const createRecord = async (formData: FormData) => {
 
     return { success: true, data: newRecord };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return { success: false, error: { message: "Something went wrong" } };
+  }
+};
+
+export const getRecorByHits = async ({
+  range,
+  site_id,
+}: CommonSelectRecordsArgs) => {
+  try {
+    const statement = sql`with dates as (
+      select generate_series(
+        date_trunc('day', now() - interval '${sql.raw(
+          range
+        )}')::timestamp with time zone,
+        date_trunc('day', now())::timestamp with time zone,
+        interval '1 day'
+        ) as date
+      )
+      select
+        dates.date,
+        coalesce(count(record.site_id), 0) as hits
+      from
+        dates
+        left join record on date_trunc('day', record.created_at) = dates.date
+        and record.site_id = '${sql.raw(site_id)}'
+      group by
+      dates.date
+      order by
+      dates.date asc;
+    `;
+
+    const data: RecordByHits[] = await db.execute(statement);
+    return { data, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: { message: "Something went wrong" } };
+  }
+};
+
+export const getRecordsByCountry = async ({
+  range,
+  site_id,
+}: CommonSelectRecordsArgs) => {
+  try {
+    const statement = sql`
+    WITH time_range AS (
+      SELECT date_trunc('day', now() - interval '${sql.raw(
+        range
+      )}')::timestamp with time zone AS start_date,
+             date_trunc('day', now() + interval '1 day')::timestamp with time zone AS end_date
+    ),
+    country_counts AS (
+      SELECT
+        record.country,
+        coalesce(count(record.site_id), 0) AS hits
+      FROM
+        record
+      WHERE
+        record.site_id = '${sql.raw(site_id)}'
+        AND record.created_at >= (SELECT start_date FROM time_range)
+        AND record.created_at <= (SELECT end_date FROM time_range)
+      GROUP BY
+        record.country
+    )
+    SELECT
+      country_counts.country,
+      country_counts.hits
+    FROM
+      country_counts
+    ORDER BY
+      country_counts.country;
+    `;
+
+    const res: RecordsByCountry[] = await db.execute(statement);
+    return {  data: res, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: { message: "Something went wrong" } };
   }
 };

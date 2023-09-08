@@ -28,6 +28,9 @@ export const record = pgTable("record", {
   device: text("device"),
   referer: text("referer"),
   path: text("path"),
+  ip: text("ip"),
+  user_agent: text("user_agent"),
+  city: text("city")
 });
 
 export const insertSiteSchema = createInsertSchema(sites, {
@@ -36,7 +39,9 @@ export const insertSiteSchema = createInsertSchema(sites, {
   userId: string([minLength(1, "Missing userId")]),
 });
 
-export const insertRecordSchema = createInsertSchema(record);
+export const insertRecordSchema = createInsertSchema(record, {
+  site_id: string([minLength(1, "site_id is missing")])
+});
 
 export function validateInsertSite(input: unknown) {
   const data = safeParse(insertSiteSchema, input);

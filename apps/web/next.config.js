@@ -3,5 +3,5 @@ module.exports = {
   transpilePackages: ["@openanalytics/db", "@openanalytics/api"],
   experimental: {
     serverActions: true,
-  },
+  }
 };

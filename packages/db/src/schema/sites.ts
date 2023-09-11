@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { users } from "./users";
-import { createInsertSchema, createSelectSchema } from "drizzle-valibot";
+import { createInsertSchema } from "drizzle-valibot";
 import { flatten, minLength, safeParse, string, url } from "valibot";
 
 export const sites = pgTable("site", {
@@ -18,6 +18,7 @@ export const sites = pgTable("site", {
 export const record = pgTable("record", {
   created_at: timestamp("created_at", {
     withTimezone: true,
+    mode: "string"
   }).defaultNow(),
   id: uuid("id").primaryKey().defaultRandom(),
   site_id: uuid("site_id")

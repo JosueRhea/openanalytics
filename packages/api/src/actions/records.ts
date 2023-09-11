@@ -24,6 +24,7 @@ export const createRecord = async (formData: FormData) => {
 
     dataToSave.browser = info.browser.name;
     dataToSave.device = info.os.name;
+    // dataToSave.created_at = new Date().toUTCString()
 
     const localization = await geoip.lookup("207.97.227.239" ?? "");
 
@@ -75,7 +76,9 @@ export const getRecorByHits = async ({
       dates.date asc;
     `;
 
+    
     const data: RecordByHits[] = await db.execute(statement);
+    // console.log(typeof data[0].date.toString())
     const parsedData = data.map((record) => {
       return {
         ...record,

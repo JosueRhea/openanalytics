@@ -1,5 +1,6 @@
 "use client";
 import { Box, Card, Flex, Text } from "@radix-ui/themes";
+import { format } from "date-fns";
 import {
   Bar,
   BarChart,
@@ -24,7 +25,7 @@ const CTooltip = ({ active, payload, label }: any) => {
     // const name = data.activity.name;
     const formatedDate = new Date(data.date).toLocaleDateString("en-US");
     return (
-      <Card style={{backgroundColor: "var(--color-background)"}}>
+      <Card style={{ backgroundColor: "var(--color-background)" }}>
         <Flex
           direction="column"
           gap="0"
@@ -48,6 +49,7 @@ const CTooltip = ({ active, payload, label }: any) => {
 };
 
 export function Chart({ data, dataKey, labelKey }: Props) {
+  console.log(data);
   return (
     <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data} margin={{ right: 20 }}>
@@ -58,13 +60,15 @@ export function Chart({ data, dataKey, labelKey }: Props) {
           tickLine={false}
           axisLine={false}
           tickFormatter={(value) => {
-            const date = new Date(value);
-            const formatedDate = date.toLocaleDateString("en-US", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "2-digit",
-            });
-            return formatedDate;
+            return format(value, "eee, MM")
+            // const date = new Date(value);
+            // console.log({ value });
+            // const formatedDate = date.toLocaleDateString("en-US", {
+            //   day: "2-digit",
+            //   month: "2-digit",
+            //   year: "2-digit",
+            // });
+            // return formatedDate;
           }}
         />
         <YAxis fontSize={12} width={40} tickLine={false} axisLine={false} />

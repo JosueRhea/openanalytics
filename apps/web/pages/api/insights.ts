@@ -21,6 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     formData.append("path", data.path)
     formData.append("referer", data.referer)
     formData.append("site_id", data.site_id)
+    formData.append("created_at", data.d)
 
     const result = await createRecord(formData)
 

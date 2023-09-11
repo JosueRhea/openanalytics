@@ -3,6 +3,7 @@
 import { db, eq, schema } from "@openanalytics/db";
 import { withOwnUserAuth, withOwnUserAuthGet } from "../auth";
 import { type Site } from "@openanalytics/db/src/schema";
+import { CommonSiteGetArgs, GetSiteStatsArgs } from "../types/sites";
 
 export const createSite = withOwnUserAuth(
   async (formData: FormData, userId: string) => {
@@ -44,10 +45,7 @@ export const getSites = withOwnUserAuthGet(
   }
 );
 
-export type GetSiteArgs = {
-  site_id: string;
-};
-export const getSite = async ({ site_id }: GetSiteArgs) => {
+export const getSite = async ({ site_id }: CommonSiteGetArgs) => {
   try {
     const data = await db
       .select()
@@ -59,3 +57,8 @@ export const getSite = async ({ site_id }: GetSiteArgs) => {
     return { data: null, error: { message: "Something went wrong" } };
   }
 };
+
+
+// export const getSiteStats = ({range,site_id}: GetSiteStatsArgs) =>  {
+
+// }

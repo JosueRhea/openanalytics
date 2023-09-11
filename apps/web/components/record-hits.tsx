@@ -12,6 +12,8 @@ export async function RecordHits({ siteId }: Props) {
     site_id: siteId,
   });
 
+  // console.dir(hits, { depth: null });
+
   if (hits.error) return null;
   return (
     <Flex gap="8" direction="column" mt={"6"}>

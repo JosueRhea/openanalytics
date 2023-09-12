@@ -1,16 +1,18 @@
 "use server";
-import { validateInsertRecord } from "@openanalytics/db/src/schema";
+import { record, validateInsertRecord } from "@openanalytics/db/src/schema";
 import parser from "ua-parser-js";
 import geoip from "fast-geoip";
 import { COUNTRIES } from "../lib/countries";
-import { db, schema, sql } from "@openanalytics/db";
+import { db, eq, schema, sql } from "@openanalytics/db";
 import {
   CommonSelectRecordsArgs,
   RecordByHits,
   RecordsByCountry,
   RecordsByHits,
+  RecordsBySingleVisitors,
 } from "../types/records";
 import { ApiGetResponse } from "../types/global";
+import { CommonSiteGetArgs } from "../types/sites";
 
 export const createRecord = async (formData: FormData) => {
   try {
@@ -26,14 +28,14 @@ export const createRecord = async (formData: FormData) => {
     dataToSave.device = info.os.name;
     // dataToSave.created_at = new Date().toUTCString()
 
-    const localization = await geoip.lookup("207.97.227.239" ?? "");
+    const localization = await geoip.lookup("45.4.86.107" ?? "");
 
     dataToSave.country =
       localization?.country != undefined
         ? COUNTRIES[localization.country]
         : "unknown";
 
-    dataToSave.ip = "207.97.227.239";
+    dataToSave.ip = "45.4.86.107";
 
     dataToSave.city = localization?.city || "unknown";
 
@@ -65,7 +67,7 @@ export const getRecorByHits = async ({
       )
       select
         dates.date,
-        coalesce(count(record.site_id), 0) as hits
+        coalesce(count(record.site_id), 0) as views
       from
         dates
         left join record on date_trunc('day', record.created_at) = dates.date
@@ -76,17 +78,19 @@ export const getRecorByHits = async ({
       dates.date asc;
     `;
 
-    
     const data: RecordByHits[] = await db.execute(statement);
     // console.log(typeof data[0].date.toString())
+    let total = 0;
     const parsedData = data.map((record) => {
+      const hits = Number(record.views);
+      total += hits;
       return {
         ...record,
-        hits: Number(record.hits),
+        views: hits,
       };
     }) as RecordByHits[];
 
-    return { data: { records: parsedData, totalHits: 0 }, error: null };
+    return { data: { records: parsedData, totalHits: total }, error: null };
   } catch (error) {
     console.log(error);
     return { data: null, error: { message: "Something went wrong" } };
@@ -131,6 +135,30 @@ export const getRecordsByCountry = async ({
     return { data: res, error: null };
   } catch (error) {
     console.log(error);
+    return { data: null, error: { message: "Something went wrong" } };
+  }
+};
+
+export const getRecordsBySingleVisitors = async ({
+  site_id,
+}: CommonSiteGetArgs): ApiGetResponse<RecordsBySingleVisitors> => {
+  try {
+    // const data = await db
+    //   .select({
+    //     single_visitors: sql<number>`count(distinct ${schema.record.ip})`.mapWith(Number),
+    //   })
+    //   .from(schema.record)
+    //   .where(eq(schema.record.id, site_id))
+    const stmt = sql`
+    select
+  coalesce(count(distinct ip), 0) as total
+from
+  record
+where
+  site_id = '${sql.raw(site_id)}';`;
+    const data = (await db.execute(stmt)) as RecordsBySingleVisitors[];
+    return { data: { total: Number(data[0].total) }, error: null };
+  } catch (error) {
     return { data: null, error: { message: "Something went wrong" } };
   }
 };

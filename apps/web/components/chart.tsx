@@ -38,7 +38,10 @@ const CTooltip = ({ active, payload, label }: any) => {
         >
           <Text className="text-sm text-muted-foreground">{formatedDate}</Text>
           <Text className="text-base">
-            {payload[0]?.name}: {payload[0]?.value}
+            {payload[0]?.name}: {new Intl.NumberFormat("en-US", {
+              notation: "compact",
+              compactDisplay: "short"
+            }).format(payload[0]?.value)}
           </Text>
         </Flex>
       </Card>
@@ -49,7 +52,7 @@ const CTooltip = ({ active, payload, label }: any) => {
 };
 
 export function Chart({ data, dataKey, labelKey }: Props) {
-  console.log(data);
+
   return (
     <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data} margin={{ right: 20 }}>
@@ -62,7 +65,6 @@ export function Chart({ data, dataKey, labelKey }: Props) {
           tickFormatter={(value) => {
             return format(value, "eee, MM")
             // const date = new Date(value);
-            // console.log({ value });
             // const formatedDate = date.toLocaleDateString("en-US", {
             //   day: "2-digit",
             //   month: "2-digit",
@@ -71,7 +73,12 @@ export function Chart({ data, dataKey, labelKey }: Props) {
             // return formatedDate;
           }}
         />
-        <YAxis fontSize={12} width={40} tickLine={false} axisLine={false} />
+        <YAxis fontSize={12} width={40} tickFormatter={(value)=>{
+          return new Intl.NumberFormat('en-US', {
+            compactDisplay: "short",
+            notation: "compact"
+          }).format(value)
+        }} tickLine={false} axisLine={false} />
         <Tooltip cursor={{ fill: "var(--accent-1)" }} content={<CTooltip />} />
         <Bar dataKey={dataKey} radius={[4, 4, 0, 0]}>
           {data.map((_, index) => (

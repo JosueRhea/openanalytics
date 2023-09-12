@@ -1,6 +1,13 @@
 import { RecordHits } from "@/components/record-hits";
 import { SiteHeader } from "@/components/site-header";
-import { TIME_RANGE, getRecordsByCountry } from "@openanalytics/api";
+import { Stats } from "@/components/stats";
+import {
+  TIME_RANGE,
+  getRecorByHits,
+  getRecordsByCountry,
+  getRecordsBySingleVisitors,
+} from "@openanalytics/api";
+import { Flex } from "@radix-ui/themes";
 
 export default async function Page({ params }: { params: { siteId: string } }) {
   // const data = await getRecordsByCountry({
@@ -8,12 +15,25 @@ export default async function Page({ params }: { params: { siteId: string } }) {
   //   site_id: params.siteId,
   // });
 
-  // console.log(data)
+  const views = await getRecorByHits({
+    range: TIME_RANGE.SINCE_7_DAYS,
+    site_id: params.siteId,
+  });
+
+  const singleVisitors = await getRecordsBySingleVisitors({
+    site_id: params.siteId,
+  });
+
+  if (views.error || singleVisitors.error) return null;
 
   return (
-    <div>
+    <Flex direction="column" gap="4">
       <SiteHeader siteId={params.siteId} />
-      <RecordHits siteId={params.siteId} />
-    </div>
+      <Stats
+        totalHits={views.data.totalHits}
+        singleVisitors={singleVisitors.data.total}
+      />
+      <RecordHits data={views.data} />
+    </Flex>
   );
 }

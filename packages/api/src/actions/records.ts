@@ -143,12 +143,6 @@ export const getRecordsBySingleVisitors = async ({
   site_id,
 }: CommonSiteGetArgs): ApiGetResponse<RecordsBySingleVisitors> => {
   try {
-    // const data = await db
-    //   .select({
-    //     single_visitors: sql<number>`count(distinct ${schema.record.ip})`.mapWith(Number),
-    //   })
-    //   .from(schema.record)
-    //   .where(eq(schema.record.id, site_id))
     const stmt = sql`
     select
   coalesce(count(distinct ip), 0) as total

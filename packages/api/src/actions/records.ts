@@ -128,7 +128,7 @@ export const getRecordsByCountry = async ({
     FROM
       country_counts
     ORDER BY
-      country_counts.country;
+      country_counts.hits desc;
     `;
 
     const res: RecordsByCountry[] = await db.execute(statement);

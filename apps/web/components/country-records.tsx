@@ -5,7 +5,7 @@ import {
   getRecordsByCountry,
 } from "@openanalytics/api";
 import { COUNTRIES_BY_NAME } from "@openanalytics/api/src/lib/countries";
-import { Box, Card, Flex, Heading, ScrollArea, Text } from "@radix-ui/themes";
+import { Card, Flex, Heading, ScrollArea, Text } from "@radix-ui/themes";
 
 interface Props {
   siteId: string;
@@ -20,11 +20,12 @@ export async function CountryRecords({ siteId }: Props) {
   if (records.error) return null;
 
   return (
-    <Card>
+    <Card style={{ height: 350 }}>
       <Heading size="4">Countries</Heading>
       <ScrollArea
         mt="2"
         type="always"
+        scrollbars="vertical"
         style={{
           maxHeight: 300,
           overflowY: "auto",
@@ -46,7 +47,7 @@ interface CountryProps {
 function Country({ data }: CountryProps) {
   const countryCode = COUNTRIES_BY_NAME[data.country] ?? undefined;
   const flagUrl = countryCode
-    ? `https://flagcdn.com/16x12/${countryCode.toLowerCase()}.png`
+    ? `https://flagcdn.com/h20/${countryCode.toLowerCase()}.png`
     : undefined;
   return (
     <Flex width="100%" justify="between" align="center" pr="4">
@@ -54,6 +55,8 @@ function Country({ data }: CountryProps) {
         <img
           style={{
             objectFit: "contain",
+            height: 20,
+            width: 24,
           }}
           src={flagUrl}
           alt=""

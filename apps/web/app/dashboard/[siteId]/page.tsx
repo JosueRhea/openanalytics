@@ -22,7 +22,7 @@ export default async function Page({ params }: { params: { siteId: string } }) {
   if (views.error || singleVisitors.error) return null;
 
   return (
-    <Flex direction="column" gap="4">
+    <Flex direction="column" gap="4" pb="8">
       <SiteHeader siteId={params.siteId} />
       <Stats
         totalHits={views.data.totalHits}

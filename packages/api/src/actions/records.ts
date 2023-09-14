@@ -28,14 +28,14 @@ export const createRecord = async (formData: FormData) => {
     dataToSave.device = info.os.name;
     // dataToSave.created_at = new Date().toUTCString()
 
-    const localization = await geoip.lookup("45.4.86.107" ?? "");
+    const localization = await geoip.lookup("207.97.227.239" ?? "");
 
     dataToSave.country =
       localization?.country != undefined
         ? COUNTRIES[localization.country]
         : "unknown";
 
-    dataToSave.ip = "45.4.86.107";
+    dataToSave.ip = "207.97.227.239";
 
     dataToSave.city = localization?.city || "unknown";
 

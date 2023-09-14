@@ -246,3 +246,11 @@ export const COUNTRIES: COUNTRY = {
   ZM: "Zambia",
   ZW: "Zimbabwe",
 };
+
+export const COUNTRIES_BY_NAME: {
+  [key: string]: string;
+} = {};
+for (const code in COUNTRIES) {
+  const name = COUNTRIES[code];
+  COUNTRIES_BY_NAME[name] = code;
+}

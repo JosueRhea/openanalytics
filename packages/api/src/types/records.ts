@@ -10,21 +10,28 @@ export type CommonSelectRecordsArgs = {
   site_id: string;
 };
 
-export type RecordsByCountry =  {
+export type RecordsByCountry = {
   hits: number;
   country: string;
-}
+};
 
 export type RecordByHits = {
   date: string;
   views: number;
-}
+};
 
 export type RecordsByHits = {
-  records: RecordByHits[],
-  totalHits: number
-}
+  records: RecordByHits[];
+  totalHits: number;
+};
 
-export type RecordsBySingleVisitors  = {
+export type RecordsBySingleVisitors = {
   total: number;
-}
+};
+
+export type RecordByBrowser = {
+  hits: number;
+  name: string;
+};
+
+export type RecordsByBrowsers = RecordByBrowser[];

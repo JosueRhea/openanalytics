@@ -1,12 +1,13 @@
 "use server";
-import { record, validateInsertRecord } from "@openanalytics/db/src/schema";
+import { validateInsertRecord } from "@openanalytics/db/src/schema";
 import parser from "ua-parser-js";
 import geoip from "fast-geoip";
 import { COUNTRIES } from "../lib/countries";
-import { db, eq, schema, sql } from "@openanalytics/db";
+import { db, schema, sql } from "@openanalytics/db";
 import {
   CommonSelectRecordsArgs,
   RecordByHits,
+  RecordsByBrowsers,
   RecordsByCountry,
   RecordsByHits,
   RecordsBySingleVisitors,
@@ -132,6 +133,48 @@ export const getRecordsByCountry = async ({
     `;
 
     const res: RecordsByCountry[] = await db.execute(statement);
+    return { data: res, error: null };
+  } catch (error) {
+    console.log(error);
+    return { data: null, error: { message: "Something went wrong" } };
+  }
+};
+
+export const getRecordsByBrowsers = async ({
+  site_id,
+  range,
+}: CommonSelectRecordsArgs): ApiGetResponse<RecordsByBrowsers> => {
+  try {
+    const statement = sql`
+    WITH time_range AS (
+      SELECT date_trunc('day', now() - interval '${sql.raw(
+        range
+      )}')::timestamp with time zone AS start_date,
+             date_trunc('day', now() + interval '1 day')::timestamp with time zone AS end_date
+    ),
+    browser_counts AS (
+      SELECT
+        record.browser as name,
+        coalesce(count(record.site_id), 0) AS hits
+      FROM
+        record
+      WHERE
+        record.site_id = '${sql.raw(site_id)}'
+        AND record.created_at >= (SELECT start_date FROM time_range)
+        AND record.created_at <= (SELECT end_date FROM time_range)
+      GROUP BY
+        record.browser
+    )
+    SELECT
+      browser_counts.name,
+      browser_counts.hits
+    FROM
+      browser_counts
+    ORDER BY
+      browser_counts.hits desc;
+    `;
+
+    const res: RecordsByBrowsers = await db.execute(statement);
     return { data: res, error: null };
   } catch (error) {
     console.log(error);

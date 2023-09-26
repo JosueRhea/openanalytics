@@ -186,10 +186,7 @@ export const getRecordsByBrowsers = withOwnUserRecordsGet(
   }
 );
 
-export const getRecordsBySingleVisitors = withOwnUserRecordsGet<
-  CommonSelectRecordsArgs,
-  ApiGetResponse<RecordsBySingleVisitors>
->(
+export const getRecordsBySingleVisitors = withOwnUserRecordsGet(
   async ({
     site_id,
     range,

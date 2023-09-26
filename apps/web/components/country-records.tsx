@@ -24,7 +24,7 @@ export async function CountryRecords({ siteId }: Props) {
       <Heading size="4">Countries</Heading>
       <ScrollArea
         mt="2"
-        type="always"
+        type="auto"
         scrollbars="vertical"
         style={{
           maxHeight: 300,

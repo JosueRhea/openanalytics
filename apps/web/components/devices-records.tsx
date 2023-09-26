@@ -24,7 +24,7 @@ export async function DevicesRecords({ siteId }: Props) {
       <Heading size="4">Devices</Heading>
       <ScrollArea
         mt="2"
-        type="always"
+        type="auto"
         scrollbars="vertical"
         style={{
           maxHeight: 300,

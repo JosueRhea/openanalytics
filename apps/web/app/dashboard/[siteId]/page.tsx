@@ -7,8 +7,6 @@ import { Stats } from "@/components/stats";
 import {
   TIME_RANGE,
   getRecorByHits,
-  getRecordsByBrowsers,
-  getRecordsByDevices,
   getRecordsBySingleVisitors,
 } from "@openanalytics/api";
 import { Flex, Grid } from "@radix-ui/themes";

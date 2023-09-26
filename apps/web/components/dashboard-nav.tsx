@@ -4,6 +4,7 @@ import { Logout } from "./logout";
 import { AddSite } from "./add-site";
 import { authOptions } from "@openanalytics/api/src/auth";
 import { Logo } from "@/icons/logo";
+import Link from "next/link";
 
 export async function DashboardNav() {
   const session = await getServerSession(authOptions);
@@ -11,7 +12,9 @@ export async function DashboardNav() {
   return (
     <Flex justify="between" align="center">
       {/* <Heading size="6">OpenAnalytics</Heading> */}
-      <Logo />
+      <Link href={"/dashboard"}>
+        <Logo />
+      </Link>
       <Flex align={"center"} gap="2">
         {session && (
           <>

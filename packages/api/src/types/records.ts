@@ -1,5 +1,5 @@
 export enum TIME_RANGE {
-  SINCE_YESTERDAY = "1",
+  SINCE_YESTERDAY = "1 day",
   SINCE_7_DAYS = "6 days",
   SINCE_30_DAYS = "30 days",
   SINCE_ALL_TIME = "4000 days",

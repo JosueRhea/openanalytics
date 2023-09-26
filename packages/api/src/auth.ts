@@ -60,3 +60,18 @@ export function withOwnUserAuthGet<T>(action: (userId: string) => Promise<T>) {
     return action(sessionUserId);
   };
 }
+
+export function withOwnUserRecordsGet<TArgs, TResult>(action: (args: TArgs) => TResult) {
+  return async (data: TArgs) => {
+    const session = await getServerSession(authOptions);
+    const sessionUserId = session?.user.id;
+    if (!sessionUserId) {
+      return {
+        data: null,
+        error: { message: "Not authenticated" },
+      };
+    }
+
+    return action(data);
+  };
+}

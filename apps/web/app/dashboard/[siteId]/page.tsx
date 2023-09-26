@@ -19,6 +19,7 @@ export default async function Page({ params }: { params: { siteId: string } }) {
 
   const singleVisitors = await getRecordsBySingleVisitors({
     site_id: params.siteId,
+    range: TIME_RANGE.SINCE_7_DAYS,
   });
 
   if (views.error || singleVisitors.error) return null;
@@ -28,7 +29,7 @@ export default async function Page({ params }: { params: { siteId: string } }) {
     site_id: params.siteId,
   });
 
-  console.log(browsers)
+  console.log(browsers);
 
   return (
     <Flex direction="column" gap="4" pb="8">

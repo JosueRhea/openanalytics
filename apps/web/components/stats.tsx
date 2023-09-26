@@ -8,7 +8,7 @@ interface Props {
 export function Stats({ totalHits, singleVisitors }: Props) {
   return (
     <Grid columns={{ initial: "1", xs: "2", sm: "3" }} gap="4">
-      <Stat name="Page views" value={totalHits} />
+      <Stat name="Views" value={totalHits} />
       <Stat name="Visitors" value={singleVisitors} />
     </Grid>
   );

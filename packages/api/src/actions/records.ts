@@ -14,6 +14,7 @@ import {
 } from "../types/records";
 import { ApiGetResponse } from "../types/global";
 import { CommonSiteGetArgs } from "../types/sites";
+import { withOwnUserRecordsGet } from "../auth";
 
 export const createRecord = async (formData: FormData) => {
   try {
@@ -52,12 +53,13 @@ export const createRecord = async (formData: FormData) => {
   }
 };
 
-export const getRecorByHits = async ({
-  range,
-  site_id,
-}: CommonSelectRecordsArgs): ApiGetResponse<RecordsByHits> => {
-  try {
-    const statement = sql`with dates as (
+export const getRecorByHits = withOwnUserRecordsGet(
+  async ({
+    range,
+    site_id,
+  }: CommonSelectRecordsArgs): ApiGetResponse<RecordsByHits> => {
+    try {
+      const statement = sql`with dates as (
       select generate_series(
         date_trunc('day', now() - interval '${sql.raw(
           range
@@ -79,31 +81,30 @@ export const getRecorByHits = async ({
       dates.date asc;
     `;
 
-    const data: RecordByHits[] = await db.execute(statement);
-    // console.log(typeof data[0].date.toString())
-    let total = 0;
-    const parsedData = data.map((record) => {
-      const hits = Number(record.views);
-      total += hits;
-      return {
-        ...record,
-        views: hits,
-      };
-    }) as RecordByHits[];
+      const data: RecordByHits[] = await db.execute(statement);
+      // console.log(typeof data[0].date.toString())
+      let total = 0;
+      const parsedData = data.map((record) => {
+        const hits = Number(record.views);
+        total += hits;
+        return {
+          ...record,
+          views: hits,
+        };
+      }) as RecordByHits[];
 
-    return { data: { records: parsedData, totalHits: total }, error: null };
-  } catch (error) {
-    console.log(error);
-    return { data: null, error: { message: "Something went wrong" } };
+      return { data: { records: parsedData, totalHits: total }, error: null };
+    } catch (error) {
+      console.log(error);
+      return { data: null, error: { message: "Something went wrong" } };
+    }
   }
-};
+);
 
-export const getRecordsByCountry = async ({
-  range,
-  site_id,
-}: CommonSelectRecordsArgs) => {
-  try {
-    const statement = sql`
+export const getRecordsByCountry = withOwnUserRecordsGet(
+  async ({ range, site_id }: CommonSelectRecordsArgs) => {
+    try {
+      const statement = sql`
     WITH time_range AS (
       SELECT date_trunc('day', now() - interval '${sql.raw(
         range
@@ -132,20 +133,22 @@ export const getRecordsByCountry = async ({
       country_counts.hits desc;
     `;
 
-    const res: RecordsByCountry[] = await db.execute(statement);
-    return { data: res, error: null };
-  } catch (error) {
-    console.log(error);
-    return { data: null, error: { message: "Something went wrong" } };
+      const res: RecordsByCountry[] = await db.execute(statement);
+      return { data: res, error: null };
+    } catch (error) {
+      console.log(error);
+      return { data: null, error: { message: "Something went wrong" } };
+    }
   }
-};
+);
 
-export const getRecordsByBrowsers = async ({
-  site_id,
-  range,
-}: CommonSelectRecordsArgs): ApiGetResponse<RecordsByBrowsers> => {
-  try {
-    const statement = sql`
+export const getRecordsByBrowsers = withOwnUserRecordsGet(
+  async ({
+    site_id,
+    range,
+  }: CommonSelectRecordsArgs): ApiGetResponse<RecordsByBrowsers> => {
+    try {
+      const statement = sql`
     WITH time_range AS (
       SELECT date_trunc('day', now() - interval '${sql.raw(
         range
@@ -174,28 +177,37 @@ export const getRecordsByBrowsers = async ({
       browser_counts.hits desc;
     `;
 
-    const res: RecordsByBrowsers = await db.execute(statement);
-    return { data: res, error: null };
-  } catch (error) {
-    console.log(error);
-    return { data: null, error: { message: "Something went wrong" } };
+      const res: RecordsByBrowsers = await db.execute(statement);
+      return { data: res, error: null };
+    } catch (error) {
+      console.log(error);
+      return { data: null, error: { message: "Something went wrong" } };
+    }
   }
-};
+);
 
-export const getRecordsBySingleVisitors = async ({
-  site_id,
-}: CommonSiteGetArgs): ApiGetResponse<RecordsBySingleVisitors> => {
-  try {
-    const stmt = sql`
+export const getRecordsBySingleVisitors = withOwnUserRecordsGet<
+  CommonSelectRecordsArgs,
+  ApiGetResponse<RecordsBySingleVisitors>
+>(
+  async ({
+    site_id,
+    range,
+  }: CommonSelectRecordsArgs): ApiGetResponse<RecordsBySingleVisitors> => {
+    try {
+      const stmt = sql`
     select
   coalesce(count(distinct ip), 0) as total
 from
   record
 where
-  site_id = '${sql.raw(site_id)}';`;
-    const data = (await db.execute(stmt)) as RecordsBySingleVisitors[];
-    return { data: { total: Number(data[0].total) }, error: null };
-  } catch (error) {
-    return { data: null, error: { message: "Something went wrong" } };
+  site_id = '${sql.raw(site_id)}'
+  and created_at >= NOW() - interval '${sql.raw(range)}';`;
+      const data = (await db.execute(stmt)) as RecordsBySingleVisitors[];
+      return { data: { total: Number(data[0].total) }, error: null };
+    } catch (error) {
+      console.log(error);
+      return { data: null, error: { message: "Something went wrong" } };
+    }
   }
-};
+);

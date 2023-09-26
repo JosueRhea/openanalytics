@@ -34,4 +34,10 @@ export type RecordByBrowser = {
   name: string;
 };
 
+export type RecordByDevice = {
+  hits: number;
+  name: string;
+}
+
 export type RecordsByBrowsers = RecordByBrowser[];
+export type RecordsByDevices = RecordByDevice[]

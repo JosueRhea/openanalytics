@@ -13,7 +13,6 @@ import {
   RecordsBySingleVisitors,
 } from "../types/records";
 import { ApiGetResponse } from "../types/global";
-import { CommonSiteGetArgs } from "../types/sites";
 import { withOwnUserRecordsGet } from "../auth";
 
 export const createRecord = async (formData: FormData) => {
@@ -202,6 +201,47 @@ where
   and created_at >= NOW() - interval '${sql.raw(range)}';`;
       const data = (await db.execute(stmt)) as RecordsBySingleVisitors[];
       return { data: { total: Number(data[0].total) }, error: null };
+    } catch (error) {
+      console.log(error);
+      return { data: null, error: { message: "Something went wrong" } };
+    }
+  }
+);
+
+export const getRecordsByDevices = withOwnUserRecordsGet(
+  async ({ range, site_id }: CommonSelectRecordsArgs) => {
+    try {
+      const statement = sql`
+      WITH time_range AS (
+        SELECT date_trunc('day', now() - interval '${sql.raw(
+          range
+        )}')::timestamp with time zone AS start_date,
+               date_trunc('day', now() + interval '1 day')::timestamp with time zone AS end_date
+      ),
+      devices_counts AS (
+        SELECT
+          record.device as name,
+          coalesce(count(record.site_id), 0) AS hits
+        FROM
+          record
+        WHERE
+          record.site_id = '${sql.raw(site_id)}'
+          AND record.created_at >= (SELECT start_date FROM time_range)
+          AND record.created_at <= (SELECT end_date FROM time_range)
+        GROUP BY
+          record.device
+      )
+      SELECT
+        devices_counts.name,
+        devices_counts.hits
+      FROM
+        devices_counts
+      ORDER BY
+        devices_counts.hits desc;
+      `;
+
+      const res: RecordsByBrowsers = await db.execute(statement);
+      return { data: res, error: null };
     } catch (error) {
       console.log(error);
       return { data: null, error: { message: "Something went wrong" } };

@@ -1,12 +1,12 @@
-import { Avatar, Flex } from "@radix-ui/themes";
+import { Avatar, Flex, Link as RLink } from "@radix-ui/themes";
 import { getServerSession } from "next-auth";
 import { Logout } from "./logout";
 import { AddSite } from "./add-site";
 import { authOptions } from "@openanalytics/api/src/auth";
-import { Logo } from "@/icons/logo";
 import Link from "next/link";
 import { SelectSite } from "./select-site";
 import { getSites } from "@openanalytics/api";
+import { Logo } from "@/icons/logo";
 
 export async function DashboardNav() {
   const session = await getServerSession(authOptions);
@@ -16,7 +16,16 @@ export async function DashboardNav() {
     <Flex justify="between" align="center">
       {/* <Heading size="6">OpenAnalytics</Heading> */}
       <Flex align={"center"} gap="2">
-        <Link href={"/dashboard"}>
+        <Link
+          style={{
+            padding: 0,
+            margin: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          href={"/dashboard"}
+        >
           <Logo />
         </Link>
         {!sites.error && <SelectSite data={sites.data} />}

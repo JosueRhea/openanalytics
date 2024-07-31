@@ -19,7 +19,7 @@
         "forceConsistentCasingInFileNames": true,
         "noEmit": true,
         "esModuleInterop": true,
-        "module": "esnext",
+        "module": "ES2022",
         "moduleResolution": "node",
         "resolveJsonModule": true,
         "noUncheckedIndexedAccess": true
@@ -28,6 +28,7 @@
         "src",
         "*.ts",
         "env.mjs",
-        "**/*.ts"
-, "env.mjs"    ]
+        "**/*.ts",
+        "env.mjs"
+    ]
 }

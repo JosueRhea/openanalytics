@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
+  "type": "module",
   "scripts": {
     "generate": "drizzle-kit generate:pg",
     "push": "drizzle-kit push:pg",
-    "migrate": "ts-node --esm src/migrate.mts",
+    "migrate": "node --loader ts-node/esm src/migrate.mts",
     "studio": "drizzle-kit studio"
   },
   "keywords": [],
